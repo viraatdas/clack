@@ -28,6 +28,11 @@ export default class TextPrompt extends Prompt<string> {
 			initialUserInput: opts.initialUserInput ?? opts.initialValue,
 		});
 
+		this.on('key', (_char, key) => {
+			if (key?.name === 'return' && !this.value && opts.defaultValue !== undefined) {
+				this.value = opts.defaultValue;
+			}
+		});
 		this.on('userInput', (input) => {
 			this._setValue(input);
 		});

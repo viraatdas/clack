@@ -122,6 +122,24 @@ describe.each(['true', 'false'])('text (isCI = %s)', (isCI) => {
 		expect(output.buffer).toMatchSnapshot();
 	});
 
+	test('validates defaultValue when submitting empty input', async () => {
+		const validate = vi.fn((val) => (val === 'bar' ? undefined : 'should be bar'));
+		const result = prompts.text({
+			message: 'foo',
+			defaultValue: 'bar',
+			validate,
+			input,
+			output,
+		});
+
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(validate).toHaveBeenCalledWith('bar');
+		expect(value).toBe('bar');
+	});
+
 	test('validation errors render and clear', async () => {
 		const result = prompts.text({
 			message: 'foo',
