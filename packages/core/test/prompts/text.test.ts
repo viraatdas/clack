@@ -42,6 +42,24 @@ describe('TextPrompt', () => {
 		expect(result).to.equal('bleep bloop');
 	});
 
+	test('validates default value when submitting empty input', async () => {
+		const validate = vi.fn((value) =>
+			value === 'bleep bloop' ? undefined : 'must be default value'
+		);
+		const instance = new TextPrompt({
+			input,
+			output,
+			render: () => 'foo',
+			defaultValue: 'bleep bloop',
+			validate,
+		});
+		const resultPromise = instance.prompt();
+		input.emit('keypress', '', { name: 'return' });
+		const result = await resultPromise;
+		expect(validate).toHaveBeenCalledWith('bleep bloop');
+		expect(result).to.equal('bleep bloop');
+	});
+
 	test('keeps value on finalize', async () => {
 		const instance = new TextPrompt({
 			input,
